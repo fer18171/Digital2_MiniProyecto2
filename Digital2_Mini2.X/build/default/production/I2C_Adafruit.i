@@ -2725,6 +2725,8 @@ uint8_t m;
 void setup(void);
 void Get_time(void);
 void RTC_conf(void);
+void Start(void);
+void Stop(void);
 
 
 
@@ -2734,19 +2736,15 @@ void main(void) {
     while (1) {
         Get_time();
         SendString("Segundos: ");
-        SendChar(s);
+        SendChar(s+48);
         SendChar(0x0D);
         SendString("Minutos: ");
-        SendChar(m);
+        SendChar(m+48);
         SendChar(0x0D);
         SendString("Horas: ");
-        SendChar(h);
-
-        SendChar(0x0D);
-        SendChar(0xFF);
+        SendChar(h+48);
         SendChar(0x0D);
 
-        _delay((unsigned long)((1000)*(8000000/4000.0)));
         PORTD = s;
     }
 }
@@ -2762,12 +2760,12 @@ void setup(void) {
 
     TRISA = 0;
     TRISB = 0;
-    TRISC = 0;
+
     TRISD = 0;
 
     PORTA = 0;
     PORTB = 0;
-    PORTC = 0;
+
     PORTD = 0;
     EUSART_conf();
     I2C_Master_Init(100000);
@@ -2778,32 +2776,33 @@ void setup(void) {
 
 
 
-void RTC_conf(void){
+
+void RTC_conf(void) {
     I2C_Master_Start();
     I2C_Master_Write(0b11010000);
     I2C_Master_Write(0x07);
+
     I2C_Master_Write(0x13);
     I2C_Master_Stop();
 }
+
 void Get_time(void) {
+
     I2C_Master_Start();
     I2C_Master_Write(0b11010000);
-    I2C_Master_Write(0x01);
+    I2C_Master_Write(0x00);
 
 
 
-    _delay((unsigned long)((200)*(8000000/4000.0)));
-
-   I2C_Master_Start();
-
+    I2C_Master_RepeatedStart();
     I2C_Master_Write(0b11010001);
 
-    s = I2C_Master_Read(0);
-
-
-
-
-
+    s = I2C_Master_Read(1);
+    s &= 0b01111111;
+    m = I2C_Master_Read(1);
+    m &= 0b01111111;
+    h = I2C_Master_Read(0);
+    h &= 0b01111111;
     I2C_Master_Stop();
     _delay((unsigned long)((200)*(8000000/4000.0)));
 }

@@ -48,6 +48,8 @@ uint8_t m;
 void setup(void);
 void Get_time(void);
 void RTC_conf(void);
+void Start(void);
+void Stop(void);
 //******************************************************************************
 //Loop Principal
 //******************************************************************************
@@ -57,19 +59,15 @@ void main(void) {
     while (1) {
         Get_time();
         SendString("Segundos: ");
-        SendChar(s);
+        SendChar(s+48);
         SendChar(0x0D);
         SendString("Minutos: ");
-        SendChar(m);
+        SendChar(m+48);
         SendChar(0x0D);
         SendString("Horas: ");
-        SendChar(h);
-        
+        SendChar(h+48);
         SendChar(0x0D);
-        SendChar(0xFF);
-        SendChar(0x0D);
-        
-        __delay_ms(1000);
+
         PORTD = s;
     }
 }
@@ -85,12 +83,12 @@ void setup(void) {
 
     TRISA = 0;
     TRISB = 0;
-    TRISC = 0;
+    // TRISC = 0;
     TRISD = 0;
 
     PORTA = 0;
     PORTB = 0;
-    PORTC = 0;
+    ///  PORTC = 0;
     PORTD = 0;
     EUSART_conf();
     I2C_Master_Init(100000);
@@ -101,32 +99,43 @@ void setup(void) {
 //******************************************************************************
 // Otras Funciones
 //******************************************************************************
-void RTC_conf(void){
+
+void RTC_conf(void) {
     I2C_Master_Start();
     I2C_Master_Write(S_Add_W);
     I2C_Master_Write(0x07);
+    // I2C_Master_RepeatedStart();
     I2C_Master_Write(0x13);
     I2C_Master_Stop();
 }
+
 void Get_time(void) {
+    //Start();
     I2C_Master_Start();
     I2C_Master_Write(S_Add_W); //Le mando el byte de direccion del RTC en modo Write
-    I2C_Master_Write(0x01); /* Le envio la direccion a la cual deseo apuntar, que 
+    I2C_Master_Write(0x00); /* Le envio la direccion a la cual deseo apuntar, que 
                                en este caso es la 0 ya que ahi se guarda el dato de 
                                los segundos segun la datasheet*/
-    //I2C_Master_Stop();
-    __delay_ms(200);
 
-   I2C_Master_Start();
-   // I2C_Master_RepeatedStart();
+    I2C_Master_RepeatedStart();
     I2C_Master_Write(S_Add_R); //Le mando el byte de direccion del RTC en modo Read para leer los datos
-    
-    s = I2C_Master_Read(0);
-    //   s &= 0b01111111;
-  //  m = I2C_Master_Read(1);
-    // m &= 0b01111111;
-  //  h = I2C_Master_Read(0);
-    // h &= 0b01111111;
+
+    s = I2C_Master_Read(1);
+    s &= 0b01111111;
+    m = I2C_Master_Read(1);
+    m &= 0b01111111;
+    h = I2C_Master_Read(0);
+    h &= 0b01111111;
     I2C_Master_Stop();
     __delay_ms(200);
 }
+
+/*00100000
+  00100010
+  00100011
+  00100100
+  00100110
+  00100111
+  00101000
+  00111001
+ */ 
