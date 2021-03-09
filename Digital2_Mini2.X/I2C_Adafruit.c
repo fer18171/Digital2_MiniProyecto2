@@ -37,10 +37,7 @@
 #define S_Add_W 0b11010000 
 #define S_Add_R 0b11010001
 
-uint8_t s;
-uint8_t h;
-uint8_t m;
-
+uint8_t s, h, m, s_u, s_d, m_u, m_d, h_u, h_d;
 
 //******************************************************************************
 //Prototipos de Funciones
@@ -48,8 +45,9 @@ uint8_t m;
 void setup(void);
 void Get_time(void);
 void RTC_conf(void);
-void Start(void);
-void Stop(void);
+uint8_t Decena(uint8_t valor);
+uint8_t Unidad(uint8_t valor);
+void SetClock(void);
 //******************************************************************************
 //Loop Principal
 //******************************************************************************
@@ -58,17 +56,17 @@ void main(void) {
     setup();
     while (1) {
         Get_time();
-        SendString("Segundos: ");
-        SendChar(s+48);
+        SendString("Reloj ");
+        SendChar(Decena(h));
+        SendChar(Unidad(h));
+        SendString(":");
+        SendChar(Decena(m));
+        SendChar(Unidad(m));
+        SendString(":");
+        SendChar(Decena(s));
+        SendChar(Unidad(s));
         SendChar(0x0D);
-        SendString("Minutos: ");
-        SendChar(m+48);
-        SendChar(0x0D);
-        SendString("Horas: ");
-        SendChar(h+48);
-        SendChar(0x0D);
-
-        PORTD = s;
+        PORTD = s_u;
     }
 }
 
@@ -93,6 +91,7 @@ void setup(void) {
     EUSART_conf();
     I2C_Master_Init(100000);
     RTC_conf();
+    SetClock();
 
 }
 
@@ -125,17 +124,28 @@ void Get_time(void) {
     m = I2C_Master_Read(1);
     m &= 0b01111111;
     h = I2C_Master_Read(0);
-    h &= 0b01111111;
+    h &= 0b00111111;
     I2C_Master_Stop();
     __delay_ms(200);
 }
 
-/*00100000
-  00100010
-  00100011
-  00100100
-  00100110
-  00100111
-  00101000
-  00111001
- */ 
+
+uint8_t Decena(uint8_t valor) {
+    return (valor>>4)+48; 
+}
+
+uint8_t Unidad(uint8_t valor) {
+   return (valor & 0x0F)+48; 
+}
+
+void SetClock(void){
+    I2C_Master_Start();
+    I2C_Master_Write(S_Add_W);
+    I2C_Master_Write(0x00);
+    // I2C_Master_RepeatedStart();
+    I2C_Master_Write(0x00);
+    I2C_Master_Write(0x30);
+    I2C_Master_Write(0b00011001);
+    I2C_Master_Stop();
+
+}

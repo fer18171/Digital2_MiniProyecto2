@@ -1,10 +1,10 @@
 Version 4.0 HI-TECH Software Intermediate Code
 [p mainexit ]
-"48 I2C_Adafruit.c
-[; ;I2C_Adafruit.c: 48:     ANSEL = 0;
+"45 I2C_Adafruit.c
+[; ;I2C_Adafruit.c: 45: void setup(void) {
 [v _setup `(v ~T0 @X0 0 ef ]
-"49
-[; ;I2C_Adafruit.c: 49:     ANSELH = 0;
+"46
+[; ;I2C_Adafruit.c: 46:     ANSEL = 0;
 [v _Get_time `(v ~T0 @X0 0 ef ]
 "15 ./EUSART.h
 [; ;./EUSART.h: 15: void SendString(char* X);
@@ -12,6 +12,12 @@ Version 4.0 HI-TECH Software Intermediate Code
 "14
 [; ;./EUSART.h: 14: void SendChar(char X);
 [v _SendChar `(v ~T0 @X0 0 ef1`uc ]
+"48 I2C_Adafruit.c
+[; ;I2C_Adafruit.c: 48: 
+[v _Decena `(uc ~T0 @X0 0 ef1`uc ]
+"49
+[; ;I2C_Adafruit.c: 49:     TRISA = 0;
+[v _Unidad `(uc ~T0 @X0 0 ef1`uc ]
 "352 C:/Program Files (x86)/Microchip/MPLABX/v5.40/packs/Microchip/PIC16Fxxx_DFP/1.2.33/xc8\pic\include\proc\pic16f887.h
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.40/packs/Microchip/PIC16Fxxx_DFP/1.2.33/xc8\pic\include\proc\pic16f887.h: 352: extern volatile unsigned char PORTD __attribute__((address(0x008)));
 [v _PORTD `Vuc ~T0 @X0 0 e@8 ]
@@ -42,9 +48,12 @@ Version 4.0 HI-TECH Software Intermediate Code
 "29 ./I2C.h
 [; ;./I2C.h: 29: void I2C_Master_Init(const unsigned long c);
 [v _I2C_Master_Init `(v ~T0 @X0 0 ef1`Cul ]
-"50 I2C_Adafruit.c
-[; ;I2C_Adafruit.c: 50: 
+"47 I2C_Adafruit.c
+[; ;I2C_Adafruit.c: 47:     ANSELH = 0;
 [v _RTC_conf `(v ~T0 @X0 0 ef ]
+"50
+[; ;I2C_Adafruit.c: 50:     TRISB = 0;
+[v _SetClock `(v ~T0 @X0 0 ef ]
 "41 ./I2C.h
 [; ;./I2C.h: 41: void I2C_Master_Start(void);
 [v _I2C_Master_Start `(v ~T0 @X0 0 ef ]
@@ -299,10 +308,10 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.40/packs/Microchip/PIC16Fxxx_DFP/1.2.33/xc8\pic\include\proc\pic16f887.h: 3546: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
 "18 I2C_Adafruit.c
-[; ;I2C_Adafruit.c: 18: void Start(void);
+[; ;I2C_Adafruit.c: 18: 
 [p x FOSC  =  INTRC_CLKOUT        ]
 "19
-[; ;I2C_Adafruit.c: 19: void Stop(void);
+[; ;I2C_Adafruit.c: 19: 
 [p x WDTE  =  OFF        ]
 "20
 [; ;I2C_Adafruit.c: 20: 
@@ -311,190 +320,255 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;I2C_Adafruit.c: 21: 
 [p x MCLRE  =  ON        ]
 "22
-[; ;I2C_Adafruit.c: 22: 
+[; ;I2C_Adafruit.c: 22: void main(void) {
 [p x CP  =  OFF          ]
 "23
-[; ;I2C_Adafruit.c: 23: 
+[; ;I2C_Adafruit.c: 23:     setup();
 [p x CPD  =  OFF         ]
 "24
-[; ;I2C_Adafruit.c: 24: void main(void) {
+[; ;I2C_Adafruit.c: 24:     while (1) {
 [p x BOREN  =  OFF       ]
 "25
-[; ;I2C_Adafruit.c: 25:     setup();
+[; ;I2C_Adafruit.c: 25:         Get_time();
 [p x IESO  =  OFF        ]
 "26
-[; ;I2C_Adafruit.c: 26:     while (1) {
+[; ;I2C_Adafruit.c: 26:         SendString("Reloj ");
 [p x FCMEN  =  OFF       ]
 "27
-[; ;I2C_Adafruit.c: 27:         Get_time();
+[; ;I2C_Adafruit.c: 27:         SendChar(Decena(h));
 [p x LVP  =  OFF         ]
 "30
-[; ;I2C_Adafruit.c: 30:         SendChar(0x0D);
+[; ;I2C_Adafruit.c: 30:         SendChar(Decena(m));
 [p x BOR4V  =  BOR40V    ]
 "31
-[; ;I2C_Adafruit.c: 31:         SendString("Minutos: ");
+[; ;I2C_Adafruit.c: 31:         SendChar(Unidad(m));
 [p x WRT  =  OFF         ]
 "40
-[; ;I2C_Adafruit.c: 40: }
+[; ;I2C_Adafruit.c: 40: 
 [v _s `uc ~T0 @X0 1 e ]
-"41
-[; ;I2C_Adafruit.c: 41: 
 [v _h `uc ~T0 @X0 1 e ]
-"42
-[; ;I2C_Adafruit.c: 42: 
 [v _m `uc ~T0 @X0 1 e ]
+[v _s_u `uc ~T0 @X0 1 e ]
+[v _s_d `uc ~T0 @X0 1 e ]
+[v _m_u `uc ~T0 @X0 1 e ]
+[v _m_d `uc ~T0 @X0 1 e ]
+[v _h_u `uc ~T0 @X0 1 e ]
+[v _h_d `uc ~T0 @X0 1 e ]
 [v $root$_main `(v ~T0 @X0 0 e ]
-"57
-[; ;I2C_Adafruit.c: 57:     PORTB = 0;
+"55
+[; ;I2C_Adafruit.c: 55:     PORTB = 0;
 [v _main `(v ~T0 @X0 1 ef ]
 {
 [e :U _main ]
 [f ]
-"58
-[; ;I2C_Adafruit.c: 58: 
+"56
+[; ;I2C_Adafruit.c: 56: 
 [e ( _setup ..  ]
-"59
-[; ;I2C_Adafruit.c: 59:     PORTD = 0;
+"57
+[; ;I2C_Adafruit.c: 57:     PORTD = 0;
 [e :U 140 ]
 {
-"60
-[; ;I2C_Adafruit.c: 60:     EUSART_conf();
+"58
+[; ;I2C_Adafruit.c: 58:     EUSART_conf();
 [e ( _Get_time ..  ]
-"61
-[; ;I2C_Adafruit.c: 61:     I2C_Master_Init(100000);
+"59
+[; ;I2C_Adafruit.c: 59:     I2C_Master_Init(100000);
 [e ( _SendString (1 :s 1C ]
+"60
+[; ;I2C_Adafruit.c: 60:     RTC_conf();
+[e ( _SendChar (1 -> ( _Decena (1 _h `uc ]
+"61
+[; ;I2C_Adafruit.c: 61:     SetClock();
+[e ( _SendChar (1 -> ( _Unidad (1 _h `uc ]
 "62
-[; ;I2C_Adafruit.c: 62:     RTC_conf();
-[e ( _SendChar (1 -> + -> _s `i -> 48 `i `uc ]
-"63
-[; ;I2C_Adafruit.c: 63: 
-[e ( _SendChar (1 -> -> 13 `i `uc ]
-"64
-[; ;I2C_Adafruit.c: 64: }
+[; ;I2C_Adafruit.c: 62: 
 [e ( _SendString (1 :s 2C ]
+"63
+[; ;I2C_Adafruit.c: 63: }
+[e ( _SendChar (1 -> ( _Decena (1 _m `uc ]
+"64
+[; ;I2C_Adafruit.c: 64: 
+[e ( _SendChar (1 -> ( _Unidad (1 _m `uc ]
 "65
 [; ;I2C_Adafruit.c: 65: 
-[e ( _SendChar (1 -> + -> _m `i -> 48 `i `uc ]
+[e ( _SendString (1 :s 3C ]
 "66
 [; ;I2C_Adafruit.c: 66: 
-[e ( _SendChar (1 -> -> 13 `i `uc ]
+[e ( _SendChar (1 -> ( _Decena (1 _s `uc ]
 "67
 [; ;I2C_Adafruit.c: 67: 
-[e ( _SendString (1 :s 3C ]
+[e ( _SendChar (1 -> ( _Unidad (1 _s `uc ]
 "68
 [; ;I2C_Adafruit.c: 68: 
-[e ( _SendChar (1 -> + -> _h `i -> 48 `i `uc ]
-"69
-[; ;I2C_Adafruit.c: 69: 
 [e ( _SendChar (1 -> -> 13 `i `uc ]
-"71
-[; ;I2C_Adafruit.c: 71:     I2C_Master_Start();
-[e = _PORTD _s ]
-"72
-[; ;I2C_Adafruit.c: 72:     I2C_Master_Write(0b11010000);
+"69
+[; ;I2C_Adafruit.c: 69: void RTC_conf(void) {
+[e = _PORTD _s_u ]
+"70
+[; ;I2C_Adafruit.c: 70:     I2C_Master_Start();
 }
 [e :U 139 ]
 [e $U 140  ]
 [e :U 141 ]
-"73
-[; ;I2C_Adafruit.c: 73:     I2C_Master_Write(0x07);
+"71
+[; ;I2C_Adafruit.c: 71:     I2C_Master_Write(0b11010000);
 [e :UE 138 ]
 }
-"80
-[; ;I2C_Adafruit.c: 80: 
+"78
+[; ;I2C_Adafruit.c: 78: void Get_time(void) {
 [v _setup `(v ~T0 @X0 1 ef ]
 {
 [e :U _setup ]
 [f ]
-"81
-[; ;I2C_Adafruit.c: 81:     I2C_Master_Start();
+"79
+[; ;I2C_Adafruit.c: 79: 
 [e = _ANSEL -> -> 0 `i `uc ]
-"82
-[; ;I2C_Adafruit.c: 82:     I2C_Master_Write(0b11010000);
+"80
+[; ;I2C_Adafruit.c: 80:     I2C_Master_Start();
 [e = _ANSELH -> -> 0 `i `uc ]
-"84
-[; ;I2C_Adafruit.c: 84: 
+"82
+[; ;I2C_Adafruit.c: 82:     I2C_Master_Write(0x00);
 [e = _TRISA -> -> 0 `i `uc ]
+"83
+[; ;I2C_Adafruit.c: 83: 
+[e = _TRISB -> -> 0 `i `uc ]
 "85
 [; ;I2C_Adafruit.c: 85: 
-[e = _TRISB -> -> 0 `i `uc ]
-"87
-[; ;I2C_Adafruit.c: 87:     I2C_Master_RepeatedStart();
 [e = _TRISD -> -> 0 `i `uc ]
-"89
-[; ;I2C_Adafruit.c: 89: 
+"87
+[; ;I2C_Adafruit.c: 87:     I2C_Master_Write(0b11010001);
 [e = _PORTA -> -> 0 `i `uc ]
-"90
-[; ;I2C_Adafruit.c: 90:     s = I2C_Master_Read(1);
+"88
+[; ;I2C_Adafruit.c: 88: 
 [e = _PORTB -> -> 0 `i `uc ]
-"92
-[; ;I2C_Adafruit.c: 92:     m = I2C_Master_Read(1);
+"90
+[; ;I2C_Adafruit.c: 90:     s &= 0b01111111;
 [e = _PORTD -> -> 0 `i `uc ]
-"93
-[; ;I2C_Adafruit.c: 93:     m &= 0b01111111;
+"91
+[; ;I2C_Adafruit.c: 91:     m = I2C_Master_Read(1);
 [e ( _EUSART_conf ..  ]
-"94
-[; ;I2C_Adafruit.c: 94:     h = I2C_Master_Read(0);
+"92
+[; ;I2C_Adafruit.c: 92:     m &= 0b01111111;
 [e ( _I2C_Master_Init (1 -> -> 100000 `l `ul ]
-"95
-[; ;I2C_Adafruit.c: 95:     h &= 0b01111111;
+"93
+[; ;I2C_Adafruit.c: 93:     h = I2C_Master_Read(0);
 [e ( _RTC_conf ..  ]
-"97
-[; ;I2C_Adafruit.c: 97:     _delay((unsigned long)((200)*(8000000/4000.0)));
+"94
+[; ;I2C_Adafruit.c: 94:     h &= 0b00111111;
+[e ( _SetClock ..  ]
+"96
+[; ;I2C_Adafruit.c: 96:     _delay((unsigned long)((200)*(8000000/4000.0)));
 [e :UE 142 ]
 }
-"103
+"102
+[; ;I2C_Adafruit.c: 102: }
 [v _RTC_conf `(v ~T0 @X0 1 ef ]
 {
 [e :U _RTC_conf ]
 [f ]
-"104
+"103
+[; ;I2C_Adafruit.c: 103: 
 [e ( _I2C_Master_Start ..  ]
-"105
+"104
+[; ;I2C_Adafruit.c: 104: uint8_t Unidad(uint8_t valor) {
 [e ( _I2C_Master_Write (1 -> -> 208 `i `ui ]
-"106
+"105
+[; ;I2C_Adafruit.c: 105:    return (valor & 0x0F)+48;
 [e ( _I2C_Master_Write (1 -> -> 7 `i `ui ]
-"108
+"107
+[; ;I2C_Adafruit.c: 107: 
 [e ( _I2C_Master_Write (1 -> -> 19 `i `ui ]
-"109
+"108
+[; ;I2C_Adafruit.c: 108: void SetClock(void){
 [e ( _I2C_Master_Stop ..  ]
-"110
+"109
+[; ;I2C_Adafruit.c: 109:     I2C_Master_Start();
 [e :UE 143 ]
 }
-"112
+"111
+[; ;I2C_Adafruit.c: 111:     I2C_Master_Write(0x00);
 [v _Get_time `(v ~T0 @X0 1 ef ]
 {
 [e :U _Get_time ]
 [f ]
-"114
+"113
+[; ;I2C_Adafruit.c: 113:     I2C_Master_Write(0x00);
 [e ( _I2C_Master_Start ..  ]
-"115
+"114
+[; ;I2C_Adafruit.c: 114:     I2C_Master_Write(0x30);
 [e ( _I2C_Master_Write (1 -> -> 208 `i `ui ]
-"116
+"115
+[; ;I2C_Adafruit.c: 115:     I2C_Master_Write(0b00011001);
 [e ( _I2C_Master_Write (1 -> -> 0 `i `ui ]
-"120
+"119
 [e ( _I2C_Master_RepeatedStart ..  ]
-"121
+"120
 [e ( _I2C_Master_Write (1 -> -> 209 `i `ui ]
-"123
+"122
 [e = _s -> ( _I2C_Master_Read (1 -> -> 1 `i `us `uc ]
-"124
+"123
 [e =& _s -> -> 127 `i `uc ]
-"125
+"124
 [e = _m -> ( _I2C_Master_Read (1 -> -> 1 `i `us `uc ]
-"126
+"125
 [e =& _m -> -> 127 `i `uc ]
-"127
+"126
 [e = _h -> ( _I2C_Master_Read (1 -> -> 0 `i `us `uc ]
+"127
+[e =& _h -> -> 63 `i `uc ]
 "128
-[e =& _h -> -> 127 `i `uc ]
-"129
 [e ( _I2C_Master_Stop ..  ]
-"130
+"129
 [e ( __delay (1 -> * -> -> 200 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
-"131
+"130
 [e :UE 144 ]
 }
-[a 2C 77 105 110 117 116 111 115 58 32 0 ]
-[a 1C 83 101 103 117 110 100 111 115 58 32 0 ]
-[a 3C 72 111 114 97 115 58 32 0 ]
+"133
+[v _Decena `(uc ~T0 @X0 1 ef1`uc ]
+{
+[e :U _Decena ]
+[v _valor `uc ~T0 @X0 1 r1 ]
+[f ]
+"134
+[e ) -> + >> -> _valor `i -> 4 `i -> 48 `i `uc ]
+[e $UE 145  ]
+"135
+[e :UE 145 ]
+}
+"137
+[v _Unidad `(uc ~T0 @X0 1 ef1`uc ]
+{
+[e :U _Unidad ]
+[v _valor `uc ~T0 @X0 1 r1 ]
+[f ]
+"138
+[e ) -> + & -> _valor `i -> 15 `i -> 48 `i `uc ]
+[e $UE 146  ]
+"139
+[e :UE 146 ]
+}
+"141
+[v _SetClock `(v ~T0 @X0 1 ef ]
+{
+[e :U _SetClock ]
+[f ]
+"142
+[e ( _I2C_Master_Start ..  ]
+"143
+[e ( _I2C_Master_Write (1 -> -> 208 `i `ui ]
+"144
+[e ( _I2C_Master_Write (1 -> -> 0 `i `ui ]
+"146
+[e ( _I2C_Master_Write (1 -> -> 0 `i `ui ]
+"147
+[e ( _I2C_Master_Write (1 -> -> 48 `i `ui ]
+"148
+[e ( _I2C_Master_Write (1 -> -> 25 `i `ui ]
+"149
+[e ( _I2C_Master_Stop ..  ]
+"151
+[e :UE 147 ]
+}
+[a 2C 58 0 ]
+[a 3C 58 0 ]
+[a 1C 82 101 108 111 106 32 0 ]
