@@ -2714,7 +2714,8 @@ void SendString(char* X);
 
 
 
-uint8_t s, h, m, s_u, s_d, m_u, m_d, h_u, h_d;
+uint8_t s, h, m, s_u, s_d, m_u, m_d, h_u, h_d, EstadoPiloto;
+char time[];
 
 
 
@@ -2733,7 +2734,9 @@ void main(void) {
     setup();
     while (1) {
         Get_time();
-        SendString("Reloj ");
+
+
+        SendChar(10);
         SendChar(Decena(h));
         SendChar(Unidad(h));
         SendString(":");
@@ -2742,8 +2745,9 @@ void main(void) {
         SendString(":");
         SendChar(Decena(s));
         SendChar(Unidad(s));
-        SendChar(0x0D);
-        PORTD = s_u;
+        _delay((unsigned long)((200)*(4000000/4000.0)));
+
+        PORTAbits.RA3 = 1;
     }
 }
 
@@ -2758,13 +2762,15 @@ void setup(void) {
 
     TRISA = 0;
     TRISB = 0;
-
+    TRISC = 0;
     TRISD = 0;
-
+    TRISCbits.TRISC7 = 1;
     PORTA = 0;
     PORTB = 0;
-
+    PORTC = 0;
     PORTD = 0;
+    INTCONbits.GIE = 1;
+    INTCONbits.PEIE = 1;
     EUSART_conf();
     I2C_Master_Init(100000);
     RTC_conf();
@@ -2803,19 +2809,18 @@ void Get_time(void) {
     h = I2C_Master_Read(0);
     h &= 0b00111111;
     I2C_Master_Stop();
-    _delay((unsigned long)((200)*(8000000/4000.0)));
+    _delay((unsigned long)((200)*(4000000/4000.0)));
 }
 
-
 uint8_t Decena(uint8_t valor) {
-    return (valor>>4)+48;
+    return (valor >> 4) + 48;
 }
 
 uint8_t Unidad(uint8_t valor) {
-   return (valor & 0x0F)+48;
+    return (valor & 0x0F) + 48;
 }
 
-void SetClock(void){
+void SetClock(void) {
     I2C_Master_Start();
     I2C_Master_Write(0b11010000);
     I2C_Master_Write(0x00);
@@ -2825,4 +2830,11 @@ void SetClock(void){
     I2C_Master_Write(0b00011001);
     I2C_Master_Stop();
 
+}
+
+void __attribute__((picinterrupt(("")))) isr(void) {
+    if (PIR1bits.RCIF == 1) {
+        EstadoPiloto = Receive();
+        PIR1bits.RCIF = 0;
+    }
 }

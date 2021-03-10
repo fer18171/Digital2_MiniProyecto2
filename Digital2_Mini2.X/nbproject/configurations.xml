@@ -192,7 +192,9 @@
                   value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="0-1fff"/>
-        <property key="poweroptions.powerenable" value="false"/>
+        <property key="poweroptions.powerenable" value="true"/>
+        <property key="programmerToGoFilePath"
+                  value="C:/Users/santi/Documents/Santiago/UVG/Semestre7/ElectronicaDigital2/Proyectos/Digital2_MiniProyecto2/Digital2_Mini2.X/debug/default/Digital2_Mini2_ptg"/>
         <property key="programmerToGoImageName" value="Digital2_Mini2_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
@@ -221,7 +223,7 @@
                   value="toolpack.updateoptions.uselatestoolpack"/>
         <property key="toolpack.updateoptions.packversion"
                   value="Press to select which tool pack to use"/>
-        <property key="voltagevalue" value="5.0"/>
+        <property key="voltagevalue" value="4.7"/>
       </pk4hybrid>
     </conf>
   </confs>

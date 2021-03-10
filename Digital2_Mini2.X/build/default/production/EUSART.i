@@ -2643,14 +2643,14 @@ void SendString(char* X);
 
 void EUSART_conf(void) {
     TXSTAbits.TXEN = 1;
-    PIE1bits.RCIE = 0;
+    PIE1bits.RCIE = 1;
     PIE1bits.TXIE = 0;
     TXSTAbits.SYNC = 0;
     RCSTAbits.SPEN = 1;
     TXSTAbits.TX9 = 0;
     RCSTAbits.RC9 = 0;
     BAUDCTLbits.BRG16 = 0;
-    SPBRG = ((8000000 / 16) / 9600) - 1;
+    SPBRG = ((4000000 / 16) / 9600) - 1;
     TXSTAbits.BRGH = 1;
     SPBRGH = 0;
     RCSTAbits.CREN = 1;

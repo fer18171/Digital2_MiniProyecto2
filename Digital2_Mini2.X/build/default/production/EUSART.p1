@@ -333,8 +333,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;EUSART.c: 4:     TXSTAbits.TXEN = 1;
 [e = . . _TXSTAbits 0 5 -> -> 1 `i `uc ]
 "5
-[; ;EUSART.c: 5:     PIE1bits.RCIE = 0;
-[e = . . _PIE1bits 0 5 -> -> 0 `i `uc ]
+[; ;EUSART.c: 5:     PIE1bits.RCIE = 1;
+[e = . . _PIE1bits 0 5 -> -> 1 `i `uc ]
 "6
 [; ;EUSART.c: 6:     PIE1bits.TXIE = 0;
 [e = . . _PIE1bits 0 4 -> -> 0 `i `uc ]
@@ -354,8 +354,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;EUSART.c: 11:     BAUDCTLbits.BRG16 = 0;
 [e = . . _BAUDCTLbits 0 3 -> -> 0 `i `uc ]
 "12
-[; ;EUSART.c: 12:     SPBRG = ((8000000 / 16) / 9600) - 1;
-[e = _SPBRG -> - / / -> 8000000 `l -> -> 16 `i `l -> -> 9600 `i `l -> -> 1 `i `l `uc ]
+[; ;EUSART.c: 12:     SPBRG = ((4000000 / 16) / 9600) - 1;
+[e = _SPBRG -> - / / -> 4000000 `l -> -> 16 `i `l -> -> 9600 `i `l -> -> 1 `i `l `uc ]
 "13
 [; ;EUSART.c: 13:     TXSTAbits.BRGH = 1;
 [e = . . _TXSTAbits 0 2 -> -> 1 `i `uc ]

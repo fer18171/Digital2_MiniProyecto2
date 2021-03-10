@@ -33,11 +33,12 @@
 //******************************************************************************
 //Variables
 //******************************************************************************
-#define _XTAL_FREQ 8000000
+#define _XTAL_FREQ 4000000
 #define S_Add_W 0b11010000 
 #define S_Add_R 0b11010001
 
-uint8_t s, h, m, s_u, s_d, m_u, m_d, h_u, h_d;
+uint8_t s, h, m, s_u, s_d, m_u, m_d, h_u, h_d, EstadoPiloto;
+char time[];
 
 //******************************************************************************
 //Prototipos de Funciones
@@ -56,7 +57,9 @@ void main(void) {
     setup();
     while (1) {
         Get_time();
-        SendString("Reloj ");
+        //  SendString("Reloj "+Decena(h)+Unidad(h)+":");
+        // if (EstadoPiloto) {
+        SendChar(10);
         SendChar(Decena(h));
         SendChar(Unidad(h));
         SendString(":");
@@ -65,8 +68,9 @@ void main(void) {
         SendString(":");
         SendChar(Decena(s));
         SendChar(Unidad(s));
-        SendChar(0x0D);
-        PORTD = s_u;
+        __delay_ms(200);
+        //   }
+        PORTAbits.RA3 = 1;
     }
 }
 
@@ -81,13 +85,15 @@ void setup(void) {
 
     TRISA = 0;
     TRISB = 0;
-    // TRISC = 0;
+    TRISC = 0;
     TRISD = 0;
-
+    TRISCbits.TRISC7 = 1;
     PORTA = 0;
     PORTB = 0;
-    ///  PORTC = 0;
+    PORTC = 0;
     PORTD = 0;
+    INTCONbits.GIE = 1;
+    INTCONbits.PEIE = 1;
     EUSART_conf();
     I2C_Master_Init(100000);
     RTC_conf();
@@ -129,16 +135,15 @@ void Get_time(void) {
     __delay_ms(200);
 }
 
-
 uint8_t Decena(uint8_t valor) {
-    return (valor>>4)+48; 
+    return (valor >> 4) + 48;
 }
 
 uint8_t Unidad(uint8_t valor) {
-   return (valor & 0x0F)+48; 
+    return (valor & 0x0F) + 48;
 }
 
-void SetClock(void){
+void SetClock(void) {
     I2C_Master_Start();
     I2C_Master_Write(S_Add_W);
     I2C_Master_Write(0x00);
@@ -148,4 +153,11 @@ void SetClock(void){
     I2C_Master_Write(0b00011001);
     I2C_Master_Stop();
 
+}
+
+void __interrupt() isr(void) {
+    if (PIR1bits.RCIF == 1) {
+        EstadoPiloto = Receive(); //Aqui recibimos el dato de la recepcion
+        PIR1bits.RCIF = 0;
+    }
 }

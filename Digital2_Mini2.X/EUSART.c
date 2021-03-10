@@ -2,7 +2,7 @@
 
 void EUSART_conf(void) {
     TXSTAbits.TXEN = 1;
-    PIE1bits.RCIE = 0;
+    PIE1bits.RCIE = 1;
     PIE1bits.TXIE = 0;
     TXSTAbits.SYNC = 0;
     RCSTAbits.SPEN = 1;
