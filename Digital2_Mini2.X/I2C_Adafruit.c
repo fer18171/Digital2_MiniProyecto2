@@ -36,6 +36,8 @@
 #define _XTAL_FREQ 4000000
 #define S_Add_W 0b11010000 
 #define S_Add_R 0b11010001
+#define LedR PORTAbits.RA3
+#define LedV PORTAbits.RA2
 
 uint8_t s, h, m, s_u, s_d, m_u, m_d, h_u, h_d, EstadoPiloto;
 char time[];
@@ -59,6 +61,7 @@ void main(void) {
         Get_time();
         //  SendString("Reloj "+Decena(h)+Unidad(h)+":");
         // if (EstadoPiloto) {
+        
         SendChar(10);
         SendChar(Decena(h));
         SendChar(Unidad(h));
@@ -70,7 +73,25 @@ void main(void) {
         SendChar(Unidad(s));
         __delay_ms(200);
         //   }
-        PORTAbits.RA3 = 1;
+
+        if (EstadoPiloto == 'A') {
+            LedR = 1;
+            LedV = 1;
+        } else if (EstadoPiloto == 'B') {
+            LedR = 1;
+            LedV = 0;
+        } else if (EstadoPiloto == 'C') {
+            LedR = 0;
+            LedV = 1;
+        } else if (EstadoPiloto == 'D') {
+            LedR = 0;
+            LedV = 0;
+        } else {
+            LedR = LedR;
+            LedV = LedV;
+        }
+    //  PORTA = EstadoPiloto;
+
     }
 }
 
@@ -98,6 +119,7 @@ void setup(void) {
     I2C_Master_Init(100000);
     RTC_conf();
     SetClock();
+    EstadoPiloto = 0;
 
 }
 

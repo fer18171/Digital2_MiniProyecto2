@@ -30,8 +30,7 @@ uint8_t Receive(void) {
         RCSTAbits.CREN = 0;
         RCSTAbits.CREN = 1;
     }
-    while (PIR1bits.RCIF == 0) {
-    }
+   // while (PIR1bits.RCIF == 0) {}
     return RCREG;
 }
 

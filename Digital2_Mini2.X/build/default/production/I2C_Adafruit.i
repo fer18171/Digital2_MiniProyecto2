@@ -2706,14 +2706,7 @@ void SendString(char* X);
 
 #pragma config BOR4V = BOR40V
 #pragma config WRT = OFF
-
-
-
-
-
-
-
-
+# 42 "I2C_Adafruit.c"
 uint8_t s, h, m, s_u, s_d, m_u, m_d, h_u, h_d, EstadoPiloto;
 char time[];
 
@@ -2736,6 +2729,7 @@ void main(void) {
         Get_time();
 
 
+
         SendChar(10);
         SendChar(Decena(h));
         SendChar(Unidad(h));
@@ -2747,7 +2741,25 @@ void main(void) {
         SendChar(Unidad(s));
         _delay((unsigned long)((200)*(4000000/4000.0)));
 
-        PORTAbits.RA3 = 1;
+
+        if (EstadoPiloto == 'A') {
+            PORTAbits.RA3 = 1;
+            PORTAbits.RA2 = 1;
+        } else if (EstadoPiloto == 'B') {
+            PORTAbits.RA3 = 1;
+            PORTAbits.RA2 = 0;
+        } else if (EstadoPiloto == 'C') {
+            PORTAbits.RA3 = 0;
+            PORTAbits.RA2 = 1;
+        } else if (EstadoPiloto == 'D') {
+            PORTAbits.RA3 = 0;
+            PORTAbits.RA2 = 0;
+        } else {
+            PORTAbits.RA3 = PORTAbits.RA3;
+            PORTAbits.RA2 = PORTAbits.RA2;
+        }
+
+
     }
 }
 
@@ -2775,6 +2787,7 @@ void setup(void) {
     I2C_Master_Init(100000);
     RTC_conf();
     SetClock();
+    EstadoPiloto = 0;
 
 }
 

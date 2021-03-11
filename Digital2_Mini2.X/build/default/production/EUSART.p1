@@ -75,17 +75,6 @@ Version 4.0 HI-TECH Software Intermediate Code
 "1133
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.40/packs/Microchip/PIC16Fxxx_DFP/1.2.33/xc8\pic\include\proc\pic16f887.h: 1133: extern volatile unsigned char TXREG __attribute__((address(0x019)));
 [v _TXREG `Vuc ~T0 @X0 0 e@25 ]
-"543
-[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.40/packs/Microchip/PIC16Fxxx_DFP/1.2.33/xc8\pic\include\proc\pic16f887.h: 543:     struct {
-[s S19 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S19 . TMR1IF TMR2IF CCP1IF SSPIF TXIF RCIF ADIF ]
-"542
-[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.40/packs/Microchip/PIC16Fxxx_DFP/1.2.33/xc8\pic\include\proc\pic16f887.h: 542: typedef union {
-[u S18 `S19 1 ]
-[n S18 . . ]
-"553
-[; ;C:/Program Files (x86)/Microchip/MPLABX/v5.40/packs/Microchip/PIC16Fxxx_DFP/1.2.33/xc8\pic\include\proc\pic16f887.h: 553: extern volatile PIR1bits_t PIR1bits __attribute__((address(0x00C)));
-[v _PIR1bits `VS18 ~T0 @X0 0 e@12 ]
 "1140
 [; ;C:/Program Files (x86)/Microchip/MPLABX/v5.40/packs/Microchip/PIC16Fxxx_DFP/1.2.33/xc8\pic\include\proc\pic16f887.h: 1140: extern volatile unsigned char RCREG __attribute__((address(0x01A)));
 [v _RCREG `Vuc ~T0 @X0 0 e@26 ]
@@ -433,24 +422,11 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;EUSART.c: 32:     }
 }
 [e :U 148 ]
-"33
-[; ;EUSART.c: 33:     while (PIR1bits.RCIF == 0) {
-[e $U 149  ]
-[e :U 150 ]
-{
 "34
-[; ;EUSART.c: 34:     }
-}
-[e :U 149 ]
-"33
-[; ;EUSART.c: 33:     while (PIR1bits.RCIF == 0) {
-[e $ == -> . . _PIR1bits 0 5 `i -> 0 `i 150  ]
-[e :U 151 ]
-"35
-[; ;EUSART.c: 35:     return RCREG;
+[; ;EUSART.c: 34:     return RCREG;
 [e ) _RCREG ]
 [e $UE 147  ]
-"36
-[; ;EUSART.c: 36: }
+"35
+[; ;EUSART.c: 35: }
 [e :UE 147 ]
 }

@@ -21,7 +21,10 @@
 
 // this int will hold the current count for our sketch
 uint8_t Hora;
+char datos[8];
 String Time;
+String ValorR;
+String ValorV;
 AdafruitIO_Feed *HoraFeed = io.feed("HoraPrueba");
 AdafruitIO_Feed *RojaFeed = io.feed("LedR");
 AdafruitIO_Feed *VerdeFeed = io.feed("LedV");
@@ -33,7 +36,7 @@ void setup() {
 
   // wait for serial monitor to open
   while(! Serial);
-  //while(! Serial2);
+  while(! Serial2);
   
   Serial.print("Connecting to Adafruit IO");
 
@@ -45,7 +48,7 @@ void setup() {
   // will be called whenever a message is
   // received from adafruit io.
   RojaFeed->onMessage(handleMessage);
-  VerdeFeed->onMessage(handleMessage);
+  VerdeFeed->onMessage(handleMessage1);
   // Because Adafruit IO doesn't support the MQTT retain flag, we can use the
   // get() function to ask IO to resend the last value for this feed to just
   // this MQTT client after the io client is connected.
@@ -72,38 +75,45 @@ void loop() {
   // io.adafruit.com, and processes any incoming data.
   io.run();
   //while(Serial2.read()!=22);
-  /*while (1){
-    if(Serial2.available()>0){
-  Serial.print(Serial2.read());
-  Serial.print("\n");
-    }
-  }*/
+  
   //if (RojaFeed == "ON")
 //  Serial2.write(1);
-  /*if(Serial2.available()>0){
-    while(Serial2.read()!=10){
-      Serial2.read();
-      }
+Time = "Reloj ";
+  if(Serial2.available()>0){
     Time = "Reloj ";
-    Time = Time + char(Serial2.read());
-    Time = Time + char(Serial2.read());
-    Time = Time + char(Serial2.read());
-    Time = Time + char(Serial2.read());
-    Time = Time + char(Serial2.read());
-    Time = Time + char(Serial2.read());
-    Time = Time + char(Serial2.read());
-    Time = Time + char(Serial2.read());
+   Serial2.readBytesUntil(10, datos, 8);
 //    Serial2.write(0);
-  }*/
+Time = Time + datos;
+  }
   
+  //Codigo para enviar estados de piloto
+  if ((ValorR=="ON") & (ValorV=="ON")){
+    Serial2.print('A');
+    Serial.println("A");
+  }
+
+  else if ((ValorR=="ON") & (ValorV=="OFF")){
+     Serial2.print('B');
+     Serial.println("B");
+  }
+
+  else if ((ValorR=="OFF") & (ValorV=="ON")){
+    Serial2.print('C');
+    Serial.println("C");
+  }
+
+  else if ((ValorR=="OFF") & (ValorV=="OFF")){
+    Serial2.print('D');
+    Serial.println("D");
+  }
   
   
   
   // save count to the 'counter' feed on Adafruit IO
-  Serial.print("sending -> ");
- // Serial.println("holis");
+ // Serial.print("sending -> ");
+  
   HoraFeed->save(Time);
-
+  
   // increment the count by 1
   Hora++;
 
@@ -117,8 +127,12 @@ void loop() {
 // is received from Adafruit IO. it was attached to
 // the counter feed in the setup() function above.
 void handleMessage(AdafruitIO_Data *data) {
-
-  Serial.print("received <- ");
+  //Serial.print("received <- ");
   Serial.println(data->value());
-
+  ValorR = data->value();
+}
+void handleMessage1(AdafruitIO_Data *data) {
+  //Serial.print("received <- ");
+  Serial.println(data->value());
+  ValorV = data->value();
 }
