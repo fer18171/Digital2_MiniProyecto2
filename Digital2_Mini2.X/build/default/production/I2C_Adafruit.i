@@ -2719,6 +2719,7 @@ void RTC_conf(void);
 uint8_t Decena(uint8_t valor);
 uint8_t Unidad(uint8_t valor);
 void SetClock(void);
+void SendClock(void);
 
 
 
@@ -2727,20 +2728,7 @@ void main(void) {
     setup();
     while (1) {
         Get_time();
-
-
-
-        SendChar(10);
-        SendChar(Decena(h));
-        SendChar(Unidad(h));
-        SendString(":");
-        SendChar(Decena(m));
-        SendChar(Unidad(m));
-        SendString(":");
-        SendChar(Decena(s));
-        SendChar(Unidad(s));
-        _delay((unsigned long)((200)*(4000000/4000.0)));
-
+        SendClock();
 
         if (EstadoPiloto == 'A') {
             PORTAbits.RA3 = 1;
@@ -2758,8 +2746,6 @@ void main(void) {
             PORTAbits.RA3 = PORTAbits.RA3;
             PORTAbits.RA2 = PORTAbits.RA2;
         }
-
-
     }
 }
 
@@ -2786,9 +2772,8 @@ void setup(void) {
     EUSART_conf();
     I2C_Master_Init(100000);
     RTC_conf();
-    SetClock();
     EstadoPiloto = 0;
-
+    SetClock();
 }
 
 
@@ -2837,17 +2822,32 @@ void SetClock(void) {
     I2C_Master_Start();
     I2C_Master_Write(0b11010000);
     I2C_Master_Write(0x00);
-
     I2C_Master_Write(0x00);
-    I2C_Master_Write(0x30);
-    I2C_Master_Write(0b00011001);
+    I2C_Master_Write(0x38);
+    I2C_Master_Write(0b00000000);
     I2C_Master_Stop();
 
+}
+
+void SendClock(void) {
+    if (EstadoPiloto == 'M') {
+        SendChar(10);
+        SendChar(Decena(h));
+        SendChar(Unidad(h));
+        SendString(":");
+        SendChar(Decena(m));
+        SendChar(Unidad(m));
+        SendString(":");
+        SendChar(Decena(s));
+        SendChar(Unidad(s));
+        EstadoPiloto = 'N';
+    }
 }
 
 void __attribute__((picinterrupt(("")))) isr(void) {
     if (PIR1bits.RCIF == 1) {
         EstadoPiloto = Receive();
         PIR1bits.RCIF = 0;
+
     }
 }
