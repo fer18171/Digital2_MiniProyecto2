@@ -76,19 +76,18 @@ void loop() {
   // function. it keeps the client connected to
   // io.adafruit.com, and processes any incoming data.
   io.run();
-  Time = "Reloj "; //Inicia el string de tiempo como Reloj
+
   Serial2.write('M');
-  Serial.println(Serial2.available());
   if(Serial2.available()>0){ //Solo entra si hay datos en el buffer serial
-    
-    
-    
-   /*
+    Serial.print("Buffer: ");
+    Serial.println(Serial2.available());
+    /*Time = "Reloj "; //Inicia el string de tiempo como Reloj
    Serial2.readBytesUntil(10, datos, 8); //Se toman en orden los valores del pic
-   Time = Time + datos; //Se une en Time el string Reloj con los valores recibidos del pic
-   */
-   
-   if (Serial2.read()==10);{
+Time = Time + datos; //Se une en Time el string Reloj con los valores recibidos del pic
+*/
+  Time = "Reloj ";
+  
+  if (Serial2.read()==10){
    Time = Time + char(Serial2.read());
    Time = Time + char(Serial2.read());
    Time = Time + char(Serial2.read());
@@ -97,36 +96,46 @@ void loop() {
    Time = Time + char(Serial2.read());
    Time = Time + char(Serial2.read());
    Time = Time + char(Serial2.read());
-   }
+  }
   }
   
   //Codigo para enviar estados de piloto dependiendo de los valores de estados recibidos del adafruit
   if ((ValorR=="ON") & (ValorV=="ON")){
-    Serial2.write('A');
-   // Serial.println("A"); // Se imprimen en la terminal para verificar que si esta entrando al if
+    Serial.println("A"); // Se imprimen en la terminal para verificar que si esta entrando al if
+    Serial.println(Serial2.availableForWrite());
+    Serial2.print('A');
+    
   }
 
   else if ((ValorR=="ON") & (ValorV=="OFF")){
-     Serial2.write('B');
-     //Serial.println("B");
+     Serial.println("B");
+     Serial.println(Serial2.availableForWrite());
+     Serial2.print('B');
+     
   }
 
   else if ((ValorR=="OFF") & (ValorV=="ON")){
-    Serial2.write('C');
-    //Serial.println("C");
+   Serial.println("C");
+    Serial.println(Serial2.availableForWrite());
+    Serial2.print('C');
+    
   }
 
   else if ((ValorR=="OFF") & (ValorV=="OFF")){
-    Serial2.write('D');
-    //Serial.println("D");
+    Serial.println("D");
+    Serial.println(Serial2.availableForWrite());
+    Serial2.print('D');
   }
   
   
   
   // save count to the 'counter' feed on Adafruit IO
- // Serial.print("sending -> ");
-  
+  Serial.print("sending -> ");
+  Serial.println(Time);
   HoraFeed->save(Time);
+  Serial2.write('M');
+  // increment the count by 1
+  Hora++;
 
   // Adafruit IO is rate limited for publishing, so a delay is required in
   // between feed->save events. In this example, we will wait three seconds
@@ -139,11 +148,11 @@ void loop() {
 // the counter feed in the setup() function above.
 void handleMessage(AdafruitIO_Data *data) {
   //Serial.print("received <- ");
- // Serial.println(data->value());
+  Serial.println(data->value());
   ValorR = data->value();
 }
 void handleMessage1(AdafruitIO_Data *data) {
   //Serial.print("received <- ");
-  //Serial.println(data->value());
+  Serial.println(data->value());
   ValorV = data->value();
 }

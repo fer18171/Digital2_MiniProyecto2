@@ -39,7 +39,7 @@
 #define LedR PORTAbits.RA3
 #define LedV PORTAbits.RA2
 
-uint8_t s, h, m, s_u, s_d, m_u, m_d, h_u, h_d, EstadoPiloto;
+uint8_t s, h, m, s_u, s_d, m_u, m_d, h_u, h_d, EstadoPiloto,tempP;
 char time[];
 
 //******************************************************************************
@@ -51,7 +51,6 @@ void RTC_conf(void);
 uint8_t Decena(uint8_t valor);
 uint8_t Unidad(uint8_t valor);
 void SetClock(void);
-void SendClock(void);
 //******************************************************************************
 //Loop Principal
 //******************************************************************************
@@ -60,8 +59,23 @@ void main(void) {
     setup();
     while (1) {
         Get_time();
-        SendClock();
-            //Dependiendo del valor recibido por UART, se encienden o apagan los leds
+        
+       // Enviar datos por serial al ESP32
+        if (EstadoPiloto == 'M'){
+        SendChar(10); //Se envia un dato de inicio para identificar los datos en orden en el ESP32
+        SendChar(Decena(h));
+        SendChar(Unidad(h));
+        SendString(":");
+        SendChar(Decena(m));
+        SendChar(Unidad(m));
+        SendString(":");
+        SendChar(Decena(s));
+        SendChar(Unidad(s));
+        EstadoPiloto = tempP;
+        __delay_ms(200);
+        }
+
+        //Dependiendo del valor recibido por UART, se encienden o apagan los leds
         if (EstadoPiloto == 'A') {
             LedR = 1;
             LedV = 1;
@@ -89,7 +103,7 @@ void main(void) {
 void setup(void) {
     ANSEL = 0;
     ANSELH = 0;
-    //Puertos como salidas
+//Puertos como salidas
     TRISA = 0;
     TRISB = 0;
     TRISC = 0;
@@ -101,11 +115,13 @@ void setup(void) {
     PORTD = 0;
     INTCONbits.GIE = 1; //Activamos interrupciones
     INTCONbits.PEIE = 1;
-    EUSART_conf();
+    EUSART_conf(); 
     I2C_Master_Init(100000);
     RTC_conf();
+   // SetClock();
     EstadoPiloto = 0;
-    SetClock();
+    tempP = 0;
+
 }
 
 //******************************************************************************
@@ -115,9 +131,9 @@ void setup(void) {
 void RTC_conf(void) { //Se configura el reloj inicialmente segun la datasheet
     I2C_Master_Start();
     I2C_Master_Write(S_Add_W);
-    I2C_Master_Write(0x07);
+    I2C_Master_Write(0x07); //direccion
     // I2C_Master_RepeatedStart();
-    I2C_Master_Write(0x13);
+    I2C_Master_Write(0x13); //dato a escribir
     I2C_Master_Stop();
 }
 
@@ -132,7 +148,7 @@ void Get_time(void) { //Funcion para obtener datos del sensor
     I2C_Master_RepeatedStart();
     I2C_Master_Write(S_Add_R); //Le mando el byte de direccion del RTC en modo Read para leer los datos
 
-    s = I2C_Master_Read(1); //Leer datos de segundos, minutos y horas consecituvamente
+    s = I2C_Master_Read(1);  //Leer datos de segundos, minutos y horas consecituvamente
     s &= 0b01111111;
     m = I2C_Master_Read(1);
     m &= 0b01111111;
@@ -150,36 +166,26 @@ uint8_t Unidad(uint8_t valor) { //Tomar la unidad de un BCD
     return (valor & 0x0F) + 48;
 }
 
-void SetClock(void) { //Setear el valor inicial de un RTC en su primer uso
+void SetClock(void) {  //Setear el valor inicial de un RTC en su primer uso
     I2C_Master_Start();
     I2C_Master_Write(S_Add_W); //Se esribiran los valores iniciales
     I2C_Master_Write(0x00);
-    I2C_Master_Write(0x00);
-    I2C_Master_Write(0x38);
-    I2C_Master_Write(0b00000000);
+    I2C_Master_Write(0x00); //segundos
+    I2C_Master_Write(0x58); //minutos
+    I2C_Master_Write(0b00010111); //horas
     I2C_Master_Stop();
 
 }
 
-void SendClock(void) {
-    if (EstadoPiloto == 'M') {
-        SendChar(10); //Se envia un dato de inicio para identificar los datos en orden en el ESP32
-        SendChar(Decena(h));
-        SendChar(Unidad(h));
-        SendString(":");
-        SendChar(Decena(m));
-        SendChar(Unidad(m));
-        SendString(":");
-        SendChar(Decena(s));
-        SendChar(Unidad(s));
-        EstadoPiloto = 'N';
-    }
-}
-
 void __interrupt() isr(void) {
     if (PIR1bits.RCIF == 1) {
+        if (EstadoPiloto != 'M'){
+        tempP = EstadoPiloto;
+        }
+        else {
+            tempP = 'N';
+        }
         EstadoPiloto = Receive(); //Aqui recibimos el dato de la recepcion
         PIR1bits.RCIF = 0;
-        
     }
 }
